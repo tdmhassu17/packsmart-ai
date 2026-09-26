@@ -163,6 +163,25 @@ export default function PackSmartApp() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState("signin");
 
+  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+  const [cursorHover, setCursorHover] = useState(false);
+
+  // Custom Cursor Movement
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMouseMove);
+  }, []);
+
+  // Lucide Icons Refresh
+  useEffect(() => {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  });
+
   // Synchronize Theme Attribute
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -319,8 +338,24 @@ export default function PackSmartApp() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300 relative">
       
+      {/* Custom Cursor Pointer */}
+      <div 
+        className="custom-cursor-dot" 
+        style={{ 
+          transform: `translate(${cursorPos.x}px, ${cursorPos.y}px) translate(-50%, -50%)`,
+          pointerEvents: 'none'
+        }}
+      />
+      <div 
+        className={`custom-cursor-ring ${cursorHover ? 'scale-125 border-amber-400 bg-green-500/20' : ''}`}
+        style={{ 
+          transform: `translate(${cursorPos.x}px, ${cursorPos.y}px) translate(-50%, -50%)`,
+          pointerEvents: 'none'
+        }}
+      />
+
       {/* NAVBAR */}
       <header className="fixed top-0 left-0 right-0 z-50 glass-nav">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -412,41 +447,168 @@ export default function PackSmartApp() {
         </div>
       </section>
 
-      {/* STATS COUNTER BAR */}
-      <section className="py-10 bg-[var(--bg-surface)] border-y border-[var(--border)]">
+      {/* SECTION 2 — STATS COUNTER BAR */}
+      <section id="stats" className="py-12 bg-[var(--bg-surface)] border-y border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4">
-            <div className="text-3xl">📉</div>
+          <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4 hover:border-green-500/50 transition-all">
+            <div className="w-12 h-12 rounded-xl bg-red-500/15 text-red-400 flex items-center justify-center text-2xl font-bold">📉</div>
             <div>
-              <div className="text-2xl font-bold font-mono text-[var(--text-primary)]">₹1.5 Lakh Cr</div>
+              <div className="text-2xl sm:text-3xl font-bold font-mono text-[var(--text-primary)]">₹1.5 Lakh Cr</div>
               <div className="text-xs text-[var(--text-muted)] font-semibold">Annual Post-Harvest Loss</div>
             </div>
           </div>
-          <div className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4">
-            <div className="text-3xl">⚠️</div>
+          <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4 hover:border-amber-500/50 transition-all">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-[var(--amber)] flex items-center justify-center text-2xl font-bold">⚠️</div>
             <div>
-              <div className="text-2xl font-bold font-mono text-[var(--text-primary)]">40% Loss</div>
+              <div className="text-2xl sm:text-3xl font-bold font-mono text-[var(--text-primary)]">40% Loss</div>
               <div className="text-xs text-[var(--text-muted)] font-semibold">From Wrong Packaging Barrier</div>
             </div>
           </div>
-          <div className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4">
-            <div className="text-3xl">🧑‍🌾</div>
+          <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4 hover:border-green-500/50 transition-all">
+            <div className="w-12 h-12 rounded-xl bg-green-500/15 text-[var(--green-primary)] flex items-center justify-center text-2xl font-bold">🧑‍🌾</div>
             <div>
-              <div className="text-2xl font-bold font-mono text-[var(--text-primary)]">8 Crore+</div>
-              <div className="text-xs text-[var(--text-muted)] font-semibold">Farmers & MSMEs Empowered</div>
+              <div className="text-2xl sm:text-3xl font-bold font-mono text-[var(--text-primary)]">8 Crore+</div>
+              <div className="text-xs text-[var(--text-muted)] font-semibold">Farmers & Food MSMEs</div>
             </div>
           </div>
-          <div className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4">
-            <div className="text-3xl">⚡</div>
+          <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center gap-4 hover:border-cyan-500/50 transition-all">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-2xl font-bold">₹0</div>
             <div>
-              <div className="text-2xl font-bold font-mono text-[var(--green-primary)]">Supabase Cloud</div>
-              <div className="text-xs text-[var(--text-muted)] font-semibold">Real-time Batch Audit Sync</div>
+              <div className="text-2xl sm:text-3xl font-bold font-mono text-[var(--cyan)]">Zero Cost</div>
+              <div className="text-xs text-[var(--text-muted)] font-semibold">Free for Indian Agriculture</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION: OPTICAL CROP SCANNER */}
+      {/* SECTION 3 — HOW IT WORKS (3 STEPS) */}
+      <section id="how-it-works" className="py-24 px-4 max-w-7xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-[var(--green-primary)] text-xs font-mono font-bold mb-3">
+            <span>⚙️</span> Seamless 3-Step Process
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-bold font-syne text-[var(--text-primary)] mb-4">
+            How PackSmart AI Works
+          </h2>
+          <p className="text-sm text-[var(--text-muted)] font-medium">
+            From optical harvest detection to certified barrier engineering in seconds.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="glass-card rounded-3xl p-8 border-2 border-green-500/30 relative hover:border-green-500 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-green-500/20 text-[var(--green-primary)] border border-green-500/40 flex items-center justify-center font-bold text-xl mb-6 font-mono">
+              01
+            </div>
+            <h3 className="text-xl font-bold font-syne text-[var(--text-primary)] mb-3">1. Smart Produce Input</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium mb-4">
+              Select from 50+ ICAR/CFTRI benchmarked commodities, capture live video with our optical crop scanner, or upload custom lab specs.
+            </p>
+            <span className="text-[10px] font-mono px-2 py-1 rounded bg-[var(--bg-surface)] text-[var(--green-primary)] font-bold">Optical AI • Moisture Sensor</span>
+          </div>
+
+          <div className="glass-card rounded-3xl p-8 border-2 border-amber-500/30 relative hover:border-amber-500 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-[var(--amber)] border border-amber-500/40 flex items-center justify-center font-bold text-xl mb-6 font-mono">
+              02
+            </div>
+            <h3 className="text-xl font-bold font-syne text-[var(--text-primary)] mb-3">2. Bio-Chemical AI Engine</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium mb-4">
+              Our multi-objective optimization engine calculates respiration quotient, moisture sensitivity, and equilibrium gas dynamics in &lt;1.2s.
+            </p>
+            <span className="text-[10px] font-mono px-2 py-1 rounded bg-[var(--bg-surface)] text-[var(--amber)] font-bold">Multi-Objective Math • OTR/WVTR</span>
+          </div>
+
+          <div className="glass-card rounded-3xl p-8 border-2 border-cyan-500/30 relative hover:border-cyan-500 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-[var(--cyan)] border border-cyan-500/40 flex items-center justify-center font-bold text-xl mb-6 font-mono">
+              03
+            </div>
+            <h3 className="text-xl font-bold font-syne text-[var(--text-primary)] mb-3">3. Precision Specification</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium mb-4">
+              Receive ASTM-compliant film caliber, MAP gas mix (O₂/CO₂/N₂), eco-rating, supplier cost estimation, and export-grade certification.
+            </p>
+            <span className="text-[10px] font-mono px-2 py-1 rounded bg-[var(--bg-surface)] text-cyan-400 font-bold">ASTM Standards • Supabase Ledger</span>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4 — FEATURES (6 CARDS, 2x3 GRID) */}
+      <section id="features" className="py-24 px-4 max-w-7xl mx-auto border-t border-[var(--border)]">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-[var(--cyan)] text-xs font-mono font-bold mb-3">
+            <span>⚡</span> Industrial Features
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-bold font-syne text-[var(--text-primary)] mb-4">
+            Engineered for India's Food Processing Ecosystem
+          </h2>
+          <p className="text-sm text-[var(--text-muted)] font-medium">
+            Bridging the technological gap between rural farm gates and export-grade cold chains.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="glass-card rounded-2xl p-6 border border-[var(--border)] hover:border-green-500/60 transition-all group">
+            <div className="w-12 h-12 rounded-xl bg-green-500/15 text-[var(--green-primary)] flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+              📷
+            </div>
+            <h3 className="text-lg font-bold font-syne text-[var(--text-primary)] mb-2">Smart Optical Camera Scanner</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
+              Live webcam AI detection with HUD laser scanner. Instantly detects produce variety, maturity, and surface moisture index.
+            </p>
+          </div>
+
+          <div className="glass-card rounded-2xl p-6 border border-[var(--border)] hover:border-amber-500/60 transition-all group">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-[var(--amber)] flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+              🧠
+            </div>
+            <h3 className="text-lg font-bold font-syne text-[var(--text-primary)] mb-2">Multi-Objective AI Engine</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
+              Simultaneously balances cost, barrier protection, shelf-life boost, and bio-degradability under ambient or cold-chain transit.
+            </p>
+          </div>
+
+          <div className="glass-card rounded-2xl p-6 border border-[var(--border)] hover:border-cyan-500/60 transition-all group">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+              🔬
+            </div>
+            <h3 className="text-lg font-bold font-syne text-[var(--text-primary)] mb-2">OTR / WVTR Scientific Standards</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
+              Calibrated according to ASTM D3985 (Oxygen Transmission) and ASTM F1249 (Water Vapor Transmission) global benchmarks.
+            </p>
+          </div>
+
+          <div className="glass-card rounded-2xl p-6 border border-[var(--border)] hover:border-purple-500/60 transition-all group">
+            <div className="w-12 h-12 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+              💨
+            </div>
+            <h3 className="text-lg font-bold font-syne text-[var(--text-primary)] mb-2">Equilibrium MAP Gas Formulation</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
+              Computes exact Modified Atmosphere Packaging O₂ / CO₂ / N₂ percentages to suppress mold while preventing anaerobic fermentation.
+            </p>
+          </div>
+
+          <div className="glass-card rounded-2xl p-6 border border-[var(--border)] hover:border-emerald-500/60 transition-all group">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/15 text-[var(--green-primary)] flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+              🌱
+            </div>
+            <h3 className="text-lg font-bold font-syne text-[var(--text-primary)] mb-2">Eco-Score & Carbon Analytics</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
+              Prioritizes PLA bio-films, cassava-starch composites, and recyclable mono-materials with clear carbon reduction metrics.
+            </p>
+          </div>
+
+          <div className="glass-card rounded-2xl p-6 border border-[var(--border)] hover:border-yellow-500/60 transition-all group">
+            <div className="w-12 h-12 rounded-xl bg-yellow-500/15 text-yellow-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+              ⚡
+            </div>
+            <h3 className="text-lg font-bold font-syne text-[var(--text-primary)] mb-2">Supabase Cloud Batch Ledger</h3>
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
+              Enterprise ledger storage for factory batch audit logs, traceability, and instantaneous certification downloads.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5 — OPTICAL SCANNER */}
       <section id="scanner" className="py-20 px-4 max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-[var(--amber)] text-xs font-mono font-bold mb-3">
